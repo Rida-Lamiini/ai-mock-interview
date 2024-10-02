@@ -1,7 +1,7 @@
 # AI Mock Interview
 
 Welcome to the AI Mock Interview project! This application helps users prepare for interviews by simulating an interview environment powered by AI.
-![Project screenshot](./frontend/assets/screen.png)
+![Project screenshot](./frontend/src/assets/screen.png)
 
 
 ## Table of Contents
