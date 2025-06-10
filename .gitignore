@@ -1,0 +1,15 @@
+# Node (frontend)
+node_modules/
+dist/
+
+# Java (backend)
+target/
+*.log
+
+# Env and secrets
+.env
+*.env
+
+# IDEs
+.vscode/
+.idea/
