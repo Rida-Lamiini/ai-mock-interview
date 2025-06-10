@@ -17,26 +17,33 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json  # important for caching
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Run linting
+        working-directory: frontend
         run: npm run lint
 
       - name: Run unit and integration tests
+        working-directory: frontend
         run: npm test
 
       - name: Build
+        working-directory: frontend
         run: npm run build
 
       - name: Start server for E2E tests
+        working-directory: frontend
         run: npm run preview &
         env:
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_dummy-key-for-ci' }}
 
       - name: Run E2E tests
+        working-directory: frontend
         run: npm run test:e2e
         env:
           CYPRESS_BASE_URL: http://localhost:4173
@@ -45,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: coverage/
+          path: frontend/coverage/
