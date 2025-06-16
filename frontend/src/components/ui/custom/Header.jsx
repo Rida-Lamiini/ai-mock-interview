@@ -111,7 +111,7 @@ function Header() {
                 <div className="flex items-center space-x-3">
                   <div className="hidden md:flex flex-col text-right">
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {user?.firstName || "User"}
+                      {user?.firstName || "Mogo"}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {user?.emailAddresses[0]?.emailAddress}
