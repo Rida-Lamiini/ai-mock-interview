@@ -222,9 +222,6 @@ function Header() {
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {user?.firstName || "User"}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {user?.emailAddresses[0]?.emailAddress}
-                        </div>
                       </div>
                     </div>
                   </motion.div>
