@@ -220,7 +220,7 @@ function Header() {
                       </div>
                       <div>
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {user?.firstName || "User"}
+                          {user?.firstName || "Mogo"}
                         </div>
                       </div>
                     </div>
