@@ -90,34 +90,3 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      # Database Migrations
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: "temurin"
-
-      - name: Run database migrations
-        working-directory: ./backend
-        run: |
-          # Use a dedicated migration image for production safety
-          docker run --rm \
-            -e FLYWAY_URL=${{ secrets.PROD_DB_URL }} \
-            -e FLYWAY_USER=${{ secrets.PROD_DB_USER }} \
-            -e FLYWAY_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
-            ${{ env.DOCKER_HUB_REPO }}-backend:${{ env.GIT_SHA }} \
-            ./mvnw flyway:migrate
-
-      # Notifications
-      - name: Notify on success
-        if: success()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 Deployment successful! Images pushed to Docker Hub.'
-            })
