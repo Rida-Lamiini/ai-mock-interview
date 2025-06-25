@@ -1,16 +1,17 @@
 # ---------- Build stage ----------
-FROM eclipse-temurin:17-jdk AS build
+FROM eclipse-temurin:21-jdk-jammy AS build
 
 WORKDIR /app
 
-# Copy everything and build
-COPY . .
+# Copy only the files needed for Maven to resolve dependencies
+COPY pom.xml .
+COPY src ./src
 
 # Run Maven to package the application
 RUN ./mvnw clean package -DskipTests
 
 # ---------- Runtime stage ----------
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
