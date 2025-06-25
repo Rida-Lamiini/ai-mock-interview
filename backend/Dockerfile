@@ -3,11 +3,18 @@ FROM eclipse-temurin:21-jdk-jammy AS build
 
 WORKDIR /app
 
-# Copy only the files needed for Maven to resolve dependencies
+# Copy Maven wrapper scripts & config
+COPY mvnw .
+COPY .mvn .mvn
+
+# Copy pom.xml and source code
 COPY pom.xml .
 COPY src ./src
 
-# Run Maven to package the application
+# Make sure mvnw is executable
+RUN chmod +x ./mvnw
+
+# Run Maven build without tests
 RUN ./mvnw clean package -DskipTests
 
 # ---------- Runtime stage ----------
@@ -15,7 +22,7 @@ FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
-# Copy the JAR from the build stage
+# Copy the built JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
