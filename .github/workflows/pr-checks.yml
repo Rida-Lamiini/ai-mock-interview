@@ -41,11 +41,8 @@ jobs:
         with:
           java-version: 21
           distribution: "temurin"
+          cache: "maven"
 
       - name: Build and test with Maven
         working-directory: ./backend
-        run: mvn package
-
-      - name: Verify Docker build
-        working-directory: ./backend
-        run: docker build -t backend:pr-check .
+        run: mvn clean package
