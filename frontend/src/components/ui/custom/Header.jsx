@@ -19,7 +19,7 @@ function Header() {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: "📊" },
     { name: "Questions", path: "/question", icon: "❓" },
-    { name: "Upgrades", path: "/upgrade", icon: "⭐", highlight: true },
+    { name: "Upgrade", path: "/upgrade", icon: "⭐", highlight: true },
     { name: "How it Work?", path: "/how-it-works", icon: "💡" },
   ];
 
