@@ -19,8 +19,8 @@ function Header() {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: "📊" },
     { name: "Questions", path: "/question", icon: "❓" },
-    { name: "Upgrade", path: "/upgrade", icon: "⭐", highlight: true },
-    { name: "How it Work?", path: "/how-it-works", icon: "💡" },
+    { name: "Upgrades", path: "/upgrade", icon: "⭐", highlight: true },
+    { name: "How it Works?", path: "/how-it-works", icon: "💡" },
   ];
 
   useEffect(() => {
