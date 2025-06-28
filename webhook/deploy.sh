@@ -23,3 +23,20 @@ log "♻️ Recreating service: $SERVICE_NAME"
 docker compose -f docker-compose.prod.yml up -d --no-deps "$SERVICE_NAME"
 
 log "✅ Deployment finished for $SERVICE_NAME"
+
+SERVICE=$1
+TAG=$2
+
+echo "Rebuilding $SERVICE with tag $TAG"
+
+# Pull the new image
+docker pull rida999/$SERVICE:$TAG
+
+# Stop and remove old container
+docker stop $SERVICE || true
+docker rm $SERVICE || true
+
+# Run new container
+docker run -d --name $SERVICE -p 3000:3000 rida999/$SERVICE:$TAG
+
+echo "Successfully redeployed $SERVICE:$TAG"
