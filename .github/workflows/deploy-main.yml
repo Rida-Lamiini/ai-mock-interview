@@ -45,7 +45,7 @@ jobs:
             ${{ env.DOCKER_HUB_REPO }}-frontend:${{ env.GIT_SHA }}
           labels: |
             org.opencontainers.image.source=${{ github.repositoryUrl }}
-            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
             org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
