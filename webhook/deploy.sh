@@ -25,7 +25,7 @@ docker compose -f docker-compose.prod.yml up -d --no-deps "$SERVICE_NAME"
 log "✅ Deployment finished for $SERVICE_NAME"
 
 SERVICE=$1
-TAG=$2
+TAG=latest
 
 echo "Rebuilding $SERVICE with tag $TAG"
 

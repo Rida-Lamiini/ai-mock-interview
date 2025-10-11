@@ -20,17 +20,17 @@ app.use(express.json());
 app.post("/webhook", (req, res) => {
   try {
     // 1. Verify secret token
-    const token = req.headers["x-secret-token"];
-    if (token !== SECRET_TOKEN) {
-      console.warn("⚠️ Invalid token received");
-      console.log(
-        `Expected: ${SECRET_TOKEN.substring(
-          0,
-          3
-        )}..., Received: ${token?.substring(0, 3)}...`
-      );
-      return res.status(403).json({ error: "Invalid token" });
-    }
+    // const token = req.query.token;
+    // if (token !== SECRET_TOKEN) {
+    //   console.warn("⚠️ Invalid token received");
+    //   console.log(
+    //     `Expected: ${SECRET_TOKEN.substring(
+    //       0,
+    //       3
+    //     )}..., Received: ${token?.substring(0, 3)}...`
+    //   );
+    //   return res.status(403).json({ error: "Invalid token" });
+    // }
 
     // 2. Validate Docker Hub payload
     if (!req.body?.repository || !req.body?.push_data) {
@@ -45,9 +45,9 @@ app.post("/webhook", (req, res) => {
     // 3. Determine service based on your image naming convention
     let service;
     if (repoName.includes("frontend")) {
-      service = "frontend";
+      service = "ai-mock-interview-frontend";
     } else if (repoName.includes("backend")) {
-      service = "backend";
+      service = "ai-mock-interview-backend";
     } else {
       console.warn("⚠️ Unsupported repository");
       return res.status(400).json({ error: "Unsupported repository" });
