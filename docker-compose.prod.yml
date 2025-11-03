@@ -6,10 +6,12 @@ services:
       context: ./frontend
     container_name: ai-frontend
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       - backend
     restart: always
+    environment:
+      - NODE_ENV=production
 
   backend:
     build:
@@ -19,11 +21,11 @@ services:
       - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: backend
-      SPRING_DATASOURCE_URL:
-      SPRING_DATASOURCE_USERNAME:
-      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mockerdb_prod
+      SPRING_DATASOURCE_USERNAME: mockerdb_owner
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_SHOW_SQL: "false"
     depends_on:
       - db
     restart: always
@@ -32,13 +34,12 @@ services:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_DB:
-      POSTGRES_USER:
-      POSTGRES_PASSWORD:
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: mockerdb_prod
+      POSTGRES_USER: mockerdb_owner
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
 
 volumes:
