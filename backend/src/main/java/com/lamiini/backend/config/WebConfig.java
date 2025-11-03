@@ -17,7 +17,8 @@ public class WebConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins(
                             "http://localhost:3000",  // For local development
-                            "https://your-domain.com"  // Replace with your actual domain
+                            "http://13.51.161.111",   // Your EC2 public IP
+                            "https://13.51.161.111"   // HTTPS for your EC2 IP
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

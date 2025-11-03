@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api"; // For Vite
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"; // For Vite - use relative URL for production
 
 export const sendPostRequest = async (url, data) => {
   try {
