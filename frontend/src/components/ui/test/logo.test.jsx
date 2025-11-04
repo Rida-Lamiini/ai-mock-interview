@@ -7,7 +7,7 @@ describe("Logo Component", () => {
     render(<Logo />);
 
     // Check if the logo text is rendered
-    expect(screen.getByText("vocaAI")).toBeInTheDocument();
+    expect(screen.getByText("EC2")).toBeInTheDocument();
     expect(screen.getByText("Interview Coach")).toBeInTheDocument();
   });
 

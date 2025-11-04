@@ -21,7 +21,7 @@ const Button = forwardRef(
 
     const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
 
-    return <button className={classes} ref={ref} {...props} />;
+    return <button type="button" className={classes} ref={ref} {...props} />;
   }
 );
 

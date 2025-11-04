@@ -59,12 +59,18 @@ export default function HowItWorks() {
       ref={sectionRef}
       className="w-full py-20 md:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
     >
-      <div className="container px-4 md:px-6 mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+      <div className="container px-4 mx-auto md:px-6">
+        <div className="mb-16 text-center" data-testid="how-it-works-header">
+          <h2
+            className="mb-4 text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text"
+            data-testid="how-it-works-title"
+          >
             How It Works
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p
+            className="max-w-3xl mx-auto text-xl text-gray-600"
+            data-testid="how-it-works-subtitle"
+          >
             Three simple steps to transform your interview skills and land your
             dream job
           </p>
@@ -74,7 +80,7 @@ export default function HowItWorks() {
           {/* Connection Lines */}
           <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 transform -translate-y-1/2"></div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-8">
             {steps.map((step, index) => {
               const isVisible = visibleSteps.includes(index);
 
@@ -99,14 +105,14 @@ export default function HowItWorks() {
 
                   {/* Arrow for desktop */}
                   {index < steps.length - 1 && (
-                    <ArrowRight className="hidden lg:block absolute top-10 -right-16 h-8 w-8 text-gray-300 z-0" />
+                    <ArrowRight className="absolute z-0 hidden w-8 h-8 text-gray-300 lg:block top-10 -right-16" />
                   )}
 
-                  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-sm">
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">
+                  <div className="max-w-sm p-8 transition-shadow duration-300 bg-white shadow-lg rounded-2xl hover:shadow-xl">
+                    <h3 className="mb-4 text-xl font-bold text-gray-900">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="leading-relaxed text-gray-600">
                       {step.description}
                     </p>
                   </div>

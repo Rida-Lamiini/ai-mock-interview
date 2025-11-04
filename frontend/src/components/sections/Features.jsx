@@ -83,19 +83,25 @@ export default function Features() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-20 md:py-32 bg-white">
-      <div className="container px-4 md:px-6 mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+    <section ref={sectionRef} className="w-full py-20 bg-white md:py-32">
+      <div className="container px-4 mx-auto md:px-6">
+        <div className="mb-16 text-center" data-testid="features-header">
+          <h2
+            className="mb-4 text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text"
+            data-testid="features-title"
+          >
             Powerful Features for Success
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p
+            className="max-w-3xl mx-auto text-xl text-gray-600"
+            data-testid="features-subtitle"
+          >
             Everything you need to excel in your interviews, powered by
             cutting-edge AI technology
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isVisible = visibleItems.includes(index);
@@ -110,20 +116,20 @@ export default function Features() {
                 }`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 rounded-2xl group-hover:opacity-100"></div>
 
                 <div className="relative">
                   <div
                     className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${feature.color} mb-6 transform group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <Icon className="h-8 w-8 text-white" />
+                    <Icon className="w-8 h-8 text-white" />
                   </div>
 
-                  <h3 className="text-xl font-bold mb-4 text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                  <h3 className="mb-4 text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-blue-600">
                     {feature.title}
                   </h3>
 
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     {feature.description}
                   </p>
                 </div>

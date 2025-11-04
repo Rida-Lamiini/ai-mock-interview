@@ -27,8 +27,11 @@ export default function Hero() {
                 : "translate-y-10 opacity-0"
             }`}
           >
-            <div className="inline-flex items-center px-4 py-2 mb-4 text-sm font-medium text-blue-800 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 animate-bounce">
-              <Sparkles className="w-4 h-4 mr-2" />
+            <div
+              className="inline-flex items-center px-4 py-2 mb-4 text-sm font-medium text-blue-800 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 animate-bounce"
+              data-testid="hero-badge"
+            >
+              <Sparkles className="w-4 h-4 mr-2" data-testid="sparkles-icon" />
               Dev-Powered Interview Practice dev
             </div>
 

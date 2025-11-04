@@ -22,23 +22,23 @@ export default function CTA() {
   };
 
   return (
-    <section className="w-full py-20 md:py-32 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <section className="relative w-full py-20 overflow-hidden md:py-32 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-black/10"></div>
       <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-20 left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute w-64 h-64 rounded-full top-20 left-20 bg-white/10 blur-3xl animate-pulse"></div>
+        <div className="absolute delay-1000 rounded-full bottom-20 right-20 w-80 h-80 bg-white/10 blur-3xl animate-pulse"></div>
       </div>
 
-      <div className="container relative px-4 md:px-6 mx-auto">
+      <div className="container relative px-4 mx-auto md:px-6">
         <div className="flex flex-col items-center space-y-8 text-center">
           <div className="space-y-6">
-            <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-white mb-4">
+            <div className="inline-flex items-center px-4 py-2 mb-4 text-sm font-medium text-white rounded-full bg-white/20 backdrop-blur-sm">
               <Sparkles className="w-4 h-4 mr-2" />
               Join 50,000+ Successful Candidates
             </div>
 
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-white">
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
               Ready to Ace Your Next Interview?
             </h2>
 
@@ -52,46 +52,61 @@ export default function CTA() {
             {!isSubmitted ? (
               <form
                 onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col gap-4 sm:flex-row"
               >
                 <Input
                   type="email"
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-6 py-4 text-lg bg-white/90 backdrop-blur-sm border-0 rounded-full focus:bg-white transition-all duration-300"
+                  className="flex-1 px-6 py-4 text-lg transition-all duration-300 border-0 rounded-full bg-white/90 backdrop-blur-sm focus:bg-white"
                   required
                 />
                 <Button
                   type="submit"
                   size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  className="px-8 py-4 text-lg font-semibold text-blue-600 transition-all duration-300 transform bg-white rounded-full shadow-lg hover:bg-gray-100 hover:shadow-xl hover:scale-105"
                 >
                   Get Started Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </form>
             ) : (
-              <div className="flex items-center justify-center space-x-3 bg-white/20 backdrop-blur-sm rounded-full px-8 py-4">
-                <CheckCircle className="h-6 w-6 text-green-400" />
-                <span className="text-white font-semibold">
+              <div className="flex items-center justify-center px-8 py-4 space-x-3 rounded-full bg-white/20 backdrop-blur-sm">
+                <CheckCircle className="w-6 h-6 text-green-400" />
+                <span className="font-semibold text-white">
                   Thank you! We'll be in touch soon.
                 </span>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 text-white/80">
-            <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2 text-green-400" />
+          <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-8 text-white/80">
+            <div className="flex items-center" data-testid="benefit-free-trial">
+              <CheckCircle
+                className="w-5 h-5 mr-2 text-green-400"
+                data-testid="check-circle-icon"
+              />
               Free 7-day trial
             </div>
-            <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2 text-green-400" />
+            <div
+              className="flex items-center"
+              data-testid="benefit-no-credit-card"
+            >
+              <CheckCircle
+                className="w-5 h-5 mr-2 text-green-400"
+                data-testid="check-circle-icon"
+              />
               No credit card required
             </div>
-            <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2 text-green-400" />
+            <div
+              className="flex items-center"
+              data-testid="benefit-cancel-anytime"
+            >
+              <CheckCircle
+                className="w-5 h-5 mr-2 text-green-400"
+                data-testid="check-circle-icon"
+              />
               Cancel anytime
             </div>
           </div>

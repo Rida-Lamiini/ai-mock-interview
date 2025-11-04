@@ -1,8 +1,12 @@
 import { Bot } from "lucide-react";
 
-export function Logo() {
+interface LogoProps {
+  "data-testid"?: string;
+}
+
+export function Logo({ "data-testid": testId }: LogoProps) {
   return (
-    <div className="flex items-center space-x-2 ">
+    <div className="flex items-center space-x-2" data-testid={testId}>
       <div className="relative">
         <div className="flex items-center justify-center w-10 h-10 rounded-lg shadow-lg bg-gradient-to-br from-blue-600 to-purple-600">
           <Bot className="w-6 h-6 text-white" />
