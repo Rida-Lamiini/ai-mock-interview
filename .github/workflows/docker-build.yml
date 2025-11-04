@@ -1,0 +1,96 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "docker-compose.prod.yml"
+      - "Dockerfile"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "docker-compose.prod.yml"
+      - "Dockerfile"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata for frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: rida999/mock-frontend
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Extract metadata for backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: rida999/mock-backend
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Notify deployment webhook (optional)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          if [ -n "${{ secrets.WEBHOOK_URL }}" ]; then
+            curl -X POST ${{ secrets.WEBHOOK_URL }} \
+              -H "Content-Type: application/json" \
+              -H "X-Secret-Token: ${{ secrets.WEBHOOK_SECRET }}" \
+              -d '{
+                "repository": {
+                  "repo_name": "ai-mock-interview"
+                },
+                "images": {
+                  "frontend": "rida999/mock-frontend:latest",
+                  "backend": "rida999/mock-backend:latest"
+                }
+              }'
+          fi
