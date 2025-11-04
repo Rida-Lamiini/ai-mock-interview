@@ -11,7 +11,7 @@ export function Logo() {
       </div>
       <div className="flex flex-col">
         <span className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
-          Testo
+          Deploy
         </span>
         <span className="-mt-1 text-xs text-gray-500">Interview Coach</span>
       </div>
