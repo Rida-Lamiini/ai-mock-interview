@@ -2,8 +2,7 @@ version: "3.8"
 
 services:
   frontend:
-    build:
-      context: ./frontend
+    image: rida999/mock-frontend:latest
     container_name: ai-frontend
     ports:
       - "80:80"
@@ -14,8 +13,7 @@ services:
       - NODE_ENV=production
 
   backend:
-    build:
-      context: ./backend
+    image: rida999/mock-backend:latest
     container_name: ai-backend
     ports:
       - "8080:8080"
