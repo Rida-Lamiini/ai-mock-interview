@@ -13,6 +13,9 @@ RUN echo "VITE_PUBLIC_GEMINI_API_KEY=${VITE_PUBLIC_GEMINI_API_KEY}" > .env && \
     echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" >> .env && \
     echo "VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}" >> .env
 
+# Debug: Print the .env file contents to verify
+RUN cat .env
+
 # Copy package files
 COPY package.json package-lock.json* ./
 
