@@ -12,13 +12,13 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full py-20 md:py-32 lg:py-40 overflow-hidden">
+    <section className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
-      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute rounded-full top-20 left-10 w-72 h-72 bg-blue-400/20 blur-3xl animate-pulse"></div>
+      <div className="absolute delay-1000 rounded-full bottom-20 right-10 w-96 h-96 bg-purple-400/20 blur-3xl animate-pulse"></div>
 
-      <div className="container relative px-4 md:px-6 mx-auto">
+      <div className="container relative px-4 mx-auto md:px-6">
         <div className="flex flex-col items-center space-y-8 text-center">
           <div
             className={`space-y-6 transform transition-all duration-1000 ${
@@ -27,14 +27,14 @@ export default function Hero() {
                 : "translate-y-10 opacity-0"
             }`}
           >
-            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-sm font-medium text-blue-800 mb-4 animate-bounce">
+            <div className="inline-flex items-center px-4 py-2 mb-4 text-sm font-medium text-blue-800 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 animate-bounce">
               <Sparkles className="w-4 h-4 mr-2" />
-              AI-Powered Interview Practice
+              Dev-Powered Interview Practice dev
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold tracking-tight text-transparent sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text">
               Master Your Interviews
-              <span className="block text-gray-900 mt-2">
+              <span className="block mt-2 text-gray-900">
                 with AI Confidence
               </span>
             </h1>
@@ -55,18 +55,18 @@ export default function Hero() {
           >
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="px-8 py-4 text-lg font-semibold text-white transition-all duration-300 transform rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:scale-105"
             >
               Start Free Practice
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
 
             <Button
               variant="outline"
               size="lg"
-              className="border-2 border-gray-300 hover:border-blue-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-50 transform hover:scale-105 transition-all duration-300"
+              className="px-8 py-4 text-lg font-semibold transition-all duration-300 transform border-2 border-gray-300 rounded-full hover:border-blue-500 hover:bg-blue-50 hover:scale-105"
             >
-              <Play className="mr-2 h-5 w-5" />
+              <Play className="w-5 h-5 mr-2" />
               Watch Demo
             </Button>
           </div>
@@ -80,15 +80,15 @@ export default function Hero() {
           >
             <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                <div className="w-2 h-2 mr-2 bg-green-500 rounded-full animate-pulse"></div>
                 10,000+ Interviews Practiced
               </div>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                <div className="w-2 h-2 mr-2 bg-blue-500 rounded-full animate-pulse"></div>
                 95% Success Rate
               </div>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse"></div>
+                <div className="w-2 h-2 mr-2 bg-purple-500 rounded-full animate-pulse"></div>
                 AI-Powered Feedback
               </div>
             </div>
