@@ -1,0 +1,47 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT || 22 }}
+          script: |
+            # Navigate to project directory
+            cd /home/ubuntu/ai-mock-interview
+
+            # Pull latest changes
+            git pull origin main
+
+            # Pull latest Docker images
+            docker pull rida999/mock-frontend:latest
+            docker pull rida999/mock-backend:latest
+
+            # Stop existing containers
+            docker-compose -f docker-compose.prod.yml down
+
+            # Start with new images
+            docker-compose -f docker-compose.prod.yml up -d
+
+            # Clean up old images
+            docker image prune -f
+
+            # Check deployment status
+            docker-compose -f docker-compose.prod.yml ps
+
+            echo "Deployment completed successfully!"
