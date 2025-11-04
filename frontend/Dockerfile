@@ -1,19 +1,29 @@
-# Frontend Dockerfile  
-FROM node:18-alpine AS build  
-  
-WORKDIR /app  
-  
-# Copy package files  
-COPY package.json package-lock.json* ./  
-  
-# Install dependencies  
-RUN npm ci 
-  
-# Copy source code  
-COPY . .  
-  
-# Build the application  
-RUN npm run build  
+# Frontend Dockerfile
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Accept build arguments for environment variables
+ARG VITE_PUBLIC_GEMINI_API_KEY
+ARG VITE_API_BASE_URL
+ARG VITE_CLERK_PUBLISHABLE_KEY
+
+# Create .env file with build arguments
+RUN echo "VITE_PUBLIC_GEMINI_API_KEY=${VITE_PUBLIC_GEMINI_API_KEY}" > .env && \
+    echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" >> .env && \
+    echo "VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}" >> .env
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
   
 # Production stage with nginx
 FROM nginx:alpine
