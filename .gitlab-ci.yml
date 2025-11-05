@@ -92,7 +92,7 @@ frontend_test:
     - cd frontend
     - npm ci
   script:
-    - npm run test -- --watchAll=false
+    - npm run test
   artifacts:
     when: always
     reports:

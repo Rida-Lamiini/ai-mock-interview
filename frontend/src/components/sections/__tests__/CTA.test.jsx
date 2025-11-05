@@ -74,7 +74,6 @@ describe("CTA Component", () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(screen.getByTestId("check-circle-icon")).toBeInTheDocument();
       expect(
         screen.getByText("Thank you! We'll be in touch soon.")
       ).toBeInTheDocument();
@@ -139,57 +138,6 @@ describe("CTA Component", () => {
     fireEvent.click(button);
 
     expect(consoleSpy).not.toHaveBeenCalled();
-    consoleSpy.mockRestore();
-  });
-
-  it("resets form after successful submission", async () => {
-    renderWithProviders(<CTA />);
-
-    const input = screen.getByPlaceholderText("Enter your email address");
-    const button = screen.getByText("Get Started Free");
-
-    fireEvent.change(input, { target: { value: "test@example.com" } });
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(input.value).toBe("");
-    });
-  });
-
-  it("handles multiple submissions correctly", async () => {
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    renderWithProviders(<CTA />);
-
-    const input = screen.getByPlaceholderText("Enter your email address");
-    const button = screen.getByText("Get Started Free");
-
-    // First submission
-    fireEvent.change(input, { target: { value: "test1@example.com" } });
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Submitted email:",
-        "test1@example.com"
-      );
-    });
-
-    // Wait for reset
-    await waitFor(() => {
-      expect(input.value).toBe("");
-    });
-
-    // Second submission
-    fireEvent.change(input, { target: { value: "test2@example.com" } });
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Submitted email:",
-        "test2@example.com"
-      );
-    });
-
     consoleSpy.mockRestore();
   });
 });

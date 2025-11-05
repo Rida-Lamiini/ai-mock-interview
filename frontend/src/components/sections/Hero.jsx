@@ -12,7 +12,10 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40">
+    <section
+      className="relative w-full py-20 overflow-hidden md:py-32 lg:py-40"
+      data-testid="hero-section"
+    >
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
       <div className="absolute rounded-full top-20 left-10 w-72 h-72 bg-blue-400/20 blur-3xl animate-pulse"></div>

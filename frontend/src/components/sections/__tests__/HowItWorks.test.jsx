@@ -70,7 +70,9 @@ describe("HowItWorks Component", () => {
 
   it("renders step circles with gradient backgrounds", () => {
     renderWithProviders(<HowItWorks />);
-    const stepCircles = document.querySelectorAll(".bg-gradient-to-r");
+    const stepCircles = document.querySelectorAll(
+      ".w-20.h-20.rounded-full.bg-gradient-to-r"
+    );
     expect(stepCircles.length).toBe(3); // 3 steps
   });
 

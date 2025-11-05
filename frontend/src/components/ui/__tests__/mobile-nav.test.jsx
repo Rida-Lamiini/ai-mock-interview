@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { MobileNav } from "../mobile-nav";
-import { renderWithProviders } from "../../../test/utils";
+import { renderWithProviders } from "../../../test/utils.jsx";
 
 // Mock lucide-react icons
 vi.mock("lucide-react", () => ({
@@ -24,6 +24,7 @@ vi.mock("framer-motion", () => ({
 // Mock react-router-dom
 const mockLocation = { pathname: "/" };
 vi.mock("react-router-dom", () => ({
+  // eslint-disable-next-line react/prop-types
   Link: ({ children, to, ...props }) => (
     <a href={to} {...props}>
       {children}
@@ -31,6 +32,8 @@ vi.mock("react-router-dom", () => ({
   ),
   useLocation: () => mockLocation,
   useNavigate: () => vi.fn(),
+  // eslint-disable-next-line react/prop-types
+  BrowserRouter: ({ children }) => children,
 }));
 
 describe("MobileNav Component", () => {
@@ -62,7 +65,8 @@ describe("MobileNav Component", () => {
     renderWithProviders(<MobileNav isSignedIn={true} />);
 
     const dashboardLink = screen.getByText("Dashboard").closest("a");
-    expect(dashboardLink).toHaveClass(
+    const iconDiv = dashboardLink.querySelector("div");
+    expect(iconDiv).toHaveClass(
       "bg-blue-100",
       "dark:bg-blue-900",
       "text-blue-600",
@@ -75,12 +79,13 @@ describe("MobileNav Component", () => {
     renderWithProviders(<MobileNav isSignedIn={true} />);
 
     const questionsLink = screen.getByText("Questions").closest("a");
-    expect(questionsLink).toHaveClass("text-gray-500", "dark:text-gray-400");
+    const iconDiv = questionsLink.querySelector("div");
+    expect(iconDiv).toHaveClass("text-gray-500", "dark:text-gray-400");
   });
 
   it("has proper fixed positioning", () => {
     renderWithProviders(<MobileNav isSignedIn={true} />);
-    const nav = document.querySelector("div");
+    const nav = document.querySelector("div.fixed");
     expect(nav).toHaveClass(
       "fixed",
       "bottom-0",
@@ -120,7 +125,7 @@ describe("MobileNav Component", () => {
 
   it("has proper responsive design (hidden on md and up)", () => {
     renderWithProviders(<MobileNav isSignedIn={true} />);
-    const nav = document.querySelector("div");
+    const nav = document.querySelector("div.fixed");
     expect(nav).toHaveClass("md:hidden");
   });
 });

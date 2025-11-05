@@ -83,7 +83,11 @@ export default function Features() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-20 bg-white md:py-32">
+    <section
+      ref={sectionRef}
+      className="w-full py-20 bg-white md:py-32"
+      data-testid="features-section"
+    >
       <div className="container px-4 mx-auto md:px-6">
         <div className="mb-16 text-center" data-testid="features-header">
           <h2

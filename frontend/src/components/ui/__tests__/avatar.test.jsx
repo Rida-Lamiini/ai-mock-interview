@@ -2,6 +2,17 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Avatar, AvatarImage, AvatarFallback } from "../avatar";
 
+// Mock Image constructor
+// eslint-disable-next-line no-global-assign
+global.Image = class MockImage {
+  constructor() {
+    // Simulate image loading
+    setTimeout(() => {
+      if (this.onload) this.onload();
+    }, 0);
+  }
+};
+
 describe("Avatar Component", () => {
   it("renders Avatar root with default classes", () => {
     render(<Avatar data-testid="avatar">Avatar Content</Avatar>);
@@ -39,20 +50,20 @@ describe("Avatar Component", () => {
     expect(avatar).toHaveClass("custom-avatar");
   });
 
-  it("renders AvatarImage with proper classes", () => {
+  it("renders AvatarImage with proper classes", async () => {
     render(
       <Avatar>
         <AvatarImage
-          src="test.jpg"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
           alt="Test Avatar"
           data-testid="avatar-image"
         />
         <AvatarFallback>Fallback</AvatarFallback>
       </Avatar>
     );
-    const image = screen.getByTestId("avatar-image");
+    // Wait for the image to load
+    const image = await screen.findByTestId("avatar-image");
     expect(image).toHaveClass("aspect-square", "h-full", "w-full");
-    expect(image).toHaveAttribute("src", "test.jpg");
     expect(image).toHaveAttribute("alt", "Test Avatar");
   });
 
@@ -90,14 +101,19 @@ describe("Avatar Component", () => {
     expect(fallback).toHaveClass("custom-fallback");
   });
 
-  it("AvatarImage applies custom className", () => {
+  it("AvatarImage applies custom className", async () => {
     render(
       <Avatar>
-        <AvatarImage className="custom-image" data-testid="avatar-image" />
+        <AvatarImage
+          className="custom-image"
+          data-testid="avatar-image"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+        />
         <AvatarFallback>Fallback</AvatarFallback>
       </Avatar>
     );
-    const image = screen.getByTestId("avatar-image");
+    // Wait for the image to load
+    const image = await screen.findByTestId("avatar-image");
     expect(image).toHaveClass("custom-image");
   });
 

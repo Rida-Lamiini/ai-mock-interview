@@ -51,7 +51,7 @@ describe("Testimonials Component", () => {
     renderWithProviders(<Testimonials />);
     expect(
       screen.getByText(
-        "This AI mock interview tool completely transformed my interview preparation. The realistic simulations and detailed feedback helped me identify my weak points and improve them systematically."
+        '"This AI mock interview tool completely transformed my interview preparation. The realistic simulations and detailed feedback helped me identify my weak points and improve them systematically."'
       )
     ).toBeInTheDocument();
   });
@@ -122,7 +122,7 @@ describe("Testimonials Component", () => {
 
   it("includes hover effects on cards", () => {
     renderWithProviders(<Testimonials />);
-    const cards = document.querySelectorAll(".hover:scale-105");
+    const cards = document.querySelectorAll('[class*="hover:scale-105"]');
     expect(cards.length).toBe(4);
   });
 

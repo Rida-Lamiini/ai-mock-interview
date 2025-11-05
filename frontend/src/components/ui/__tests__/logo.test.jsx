@@ -36,7 +36,7 @@ describe("Logo Component", () => {
     renderWithProviders(<Logo />);
 
     // Check main container
-    const container = screen.getByText("EC2").parentElement;
+    const container = screen.getByText("EC2").parentElement.parentElement;
     expect(container).toHaveClass("flex", "items-center", "space-x-2");
 
     // Check icon container
@@ -67,7 +67,7 @@ describe("Logo Component", () => {
     );
 
     const subtitle = screen.getByText("Interview Coach");
-    expect(subtitle).toHaveClass("text-xs", "text-gray-500");
+    expect(subtitle).toHaveClass("-mt-1", "text-xs", "text-gray-500");
   });
 
   it("has proper structure", () => {
@@ -77,9 +77,9 @@ describe("Logo Component", () => {
     const logoElement = screen.getByText("EC2").closest("div");
     expect(logoElement).toBeInTheDocument();
 
-    // Should have icon and text sections
-    const iconSection = logoElement.querySelector(".w-10.h-10");
-    const textSection = logoElement.querySelector(".flex.flex-col");
+    // Should have icon and text sections - check for the actual structure
+    const iconSection = logoElement.previousElementSibling;
+    const textSection = logoElement;
 
     expect(iconSection).toBeInTheDocument();
     expect(textSection).toBeInTheDocument();

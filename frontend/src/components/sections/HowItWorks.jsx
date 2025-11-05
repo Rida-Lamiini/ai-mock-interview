@@ -58,6 +58,7 @@ export default function HowItWorks() {
     <section
       ref={sectionRef}
       className="w-full py-20 md:py-32 bg-gradient-to-br from-gray-50 to-blue-50"
+      data-testid="how-it-works-section"
     >
       <div className="container px-4 mx-auto md:px-6">
         <div className="mb-16 text-center" data-testid="how-it-works-header">

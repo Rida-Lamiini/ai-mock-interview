@@ -22,7 +22,10 @@ export default function CTA() {
   };
 
   return (
-    <section className="relative w-full py-20 overflow-hidden md:py-32 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
+    <section
+      className="relative w-full py-20 overflow-hidden md:py-32 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600"
+      data-testid="cta-section"
+    >
       {/* Background Elements */}
       <div className="absolute inset-0 bg-black/10"></div>
       <div className="absolute top-0 left-0 w-full h-full">

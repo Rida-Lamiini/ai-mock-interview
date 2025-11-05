@@ -2,7 +2,10 @@ import { Logo } from "../ui/logo";
 
 export default function Footer() {
   return (
-    <footer className="py-8 text-white bg-gray-900">
+    <footer
+      className="py-8 text-white bg-gray-900"
+      data-testid="footer-section"
+    >
       <div className="container px-4 mx-auto md:px-6">
         <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
           <div
