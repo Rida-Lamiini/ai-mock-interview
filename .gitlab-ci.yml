@@ -7,8 +7,10 @@ backend_build:
   stage: build
   image: maven:3.9.9-eclipse-temurin-21
   cache:
+    key: maven-cache
     paths:
-      - .m2/repository
+      - backend/.m2/repository
+    policy: pull-push
   before_script:
     - cd backend
     - chmod +x ./mvnw
@@ -26,9 +28,10 @@ frontend_build:
   stage: build
   image: node:18-alpine
   cache:
-    key: ${CI_COMMIT_REF_SLUG}
+    key: npm-cache
     paths:
       - frontend/node_modules/
+    policy: pull-push
   before_script:
     - cd frontend
     - npm ci
@@ -56,6 +59,8 @@ docker_backend:
     - backend_build
   only:
     - main
+  after_script:
+    - docker system prune -f
 
 # Docker Build and Push Frontend
 docker_frontend:
@@ -72,3 +77,5 @@ docker_frontend:
     - frontend_build
   only:
     - main
+  after_script:
+    - docker system prune -f
