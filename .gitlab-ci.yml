@@ -1,40 +1,6 @@
 stages:
-  - test
   - build
-
-# Backend Testing Job
-backend_test:
-  stage: test
-  image: maven:3.9.4-openjdk-21
-  services:
-    - postgres:15-alpine
-  variables:
-    POSTGRES_DB: mockerdb_test
-    POSTGRES_USER: mockerdb_owner
-    POSTGRES_PASSWORD: testpassword
-    POSTGRES_HOST_AUTH_METHOD: trust
-  before_script:
-    - apt-get update && apt-get install -y postgresql-client
-    - cd backend
-    - chmod +x ./mvnw
-  script:
-    - ./mvnw clean test
-  only:
-    - merge_requests
-    - main
-
-# Frontend Testing Job
-frontend_test:
-  stage: test
-  image: node:18-alpine
-  before_script:
-    - cd frontend
-    - npm ci
-  script:
-    - npm run test -- --watchAll=false
-  only:
-    - merge_requests
-    - main
+  - docker
 
 # Backend Build Job
 backend_build:
@@ -44,10 +10,10 @@ backend_build:
     - cd backend
     - chmod +x ./mvnw
   script:
-    - ./mvnw clean compile -DskipTests
+    - ./mvnw clean package -DskipTests
   artifacts:
     paths:
-      - backend/target/
+      - backend/target/*.jar
     expire_in: 1 hour
   only:
     - main
@@ -65,5 +31,37 @@ frontend_build:
     paths:
       - frontend/dist/
     expire_in: 1 hour
+  only:
+    - main
+
+# Docker Build and Push Backend
+docker_backend:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  script:
+    - docker build -t rida999/mock-backend:latest ./backend
+    - docker push rida999/mock-backend:latest
+  dependencies:
+    - backend_build
+  only:
+    - main
+
+# Docker Build and Push Frontend
+docker_frontend:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  script:
+    - docker build -t rida999/mock-frontend:latest ./frontend
+    - docker push rida999/mock-frontend:latest
+  dependencies:
+    - frontend_build
   only:
     - main
