@@ -1,14 +1,43 @@
-stages:
-  - test
-  - build
-  - docker
+# -------------------------------
+# GitLab CI/CD Pipeline for Full-Stack Project
+# -------------------------------
 
-# Backend Test Job
+stages:
+  - lint # Optional: catch style/code issues early
+  - test # Run unit tests
+  - build # Build backend/frontend artifacts
+  - docker # Build & push Docker images
+  - deploy # Optional: staging/prod deployments
+
+# --------------------------------
+# Backend Linting
+# --------------------------------
+backend_lint:
+  stage: lint
+  image: maven:3.9.9-eclipse-temurin-21
+  cache:
+    key: maven-${CI_COMMIT_REF_SLUG}
+    paths:
+      - backend/.m2/repository
+    policy: pull-push
+    restore-keys:
+      - maven-
+  before_script:
+    - cd backend
+  script:
+    - ./mvnw checkstyle:check # You can add SpotBugs, PMD here too
+  only:
+    - main
+  allow_failure: true # Pipeline continues if lint fails
+
+# --------------------------------
+# Backend Tests
+# --------------------------------
 backend_test:
   stage: test
   image: maven:3.9.9-eclipse-temurin-21
   cache:
-    key: maven-cache
+    key: maven-${CI_COMMIT_REF_SLUG}
     paths:
       - backend/.m2/repository
     policy: pull-push
@@ -20,16 +49,65 @@ backend_test:
     when: always
     reports:
       junit:
-        - target/surefire-reports/*.xml
+        - target/surefire-reports/*.xml # GitLab can show test results
   only:
     - main
+  allow_failure: false # Pipeline stops if tests fail
 
-# Backend Build Job
+# --------------------------------
+# Frontend Linting
+# --------------------------------
+frontend_lint:
+  stage: lint
+  image: node:18-alpine
+  cache:
+    key: npm-${CI_COMMIT_REF_SLUG}
+    paths:
+      - frontend/node_modules/
+    policy: pull-push
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npx eslint src/ --max-warnings=0 # Fails on any lint warning
+  only:
+    - main
+  allow_failure: true
+
+# --------------------------------
+# Frontend Tests
+# (Optional, can add Jest/React Testing Library)
+# --------------------------------
+frontend_test:
+  stage: test
+  image: node:18-alpine
+  cache:
+    key: npm-${CI_COMMIT_REF_SLUG}
+    paths:
+      - frontend/node_modules/
+    policy: pull-push
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run test -- --watchAll=false
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - frontend/test-results/*.xml
+  only:
+    - main
+  allow_failure: false
+
+# --------------------------------
+# Backend Build
+# --------------------------------
 backend_build:
   stage: build
   image: maven:3.9.9-eclipse-temurin-21
   cache:
-    key: maven-cache
+    key: maven-${CI_COMMIT_REF_SLUG}
     paths:
       - backend/.m2/repository
     policy: pull-push
@@ -47,12 +125,14 @@ backend_build:
   only:
     - main
 
-# Frontend Build Job
+# --------------------------------
+# Frontend Build
+# --------------------------------
 frontend_build:
   stage: build
   image: node:18-alpine
   cache:
-    key: npm-cache
+    key: npm-${CI_COMMIT_REF_SLUG}
     paths:
       - frontend/node_modules/
     policy: pull-push
@@ -68,7 +148,9 @@ frontend_build:
   only:
     - main
 
+# --------------------------------
 # Docker Build and Push Backend
+# --------------------------------
 docker_backend:
   stage: docker
   image: docker:latest
@@ -77,10 +159,13 @@ docker_backend:
   before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8} # Short SHA
+    # Use both latest tag and commit SHA for traceability
+    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8}
     - docker build -t rida999/mock-backend:latest -t rida999/mock-backend:$COMMIT_SHA ./backend
     - docker push rida999/mock-backend:latest
     - docker push rida999/mock-backend:$COMMIT_SHA
+    # Optional: scan image for vulnerabilities
+    - docker run --rm aquasec/trivy image rida999/mock-backend:$COMMIT_SHA
   dependencies:
     - backend_build
   only:
@@ -88,7 +173,9 @@ docker_backend:
   after_script:
     - docker system prune -f
 
+# --------------------------------
 # Docker Build and Push Frontend
+# --------------------------------
 docker_frontend:
   stage: docker
   image: docker:latest
@@ -97,13 +184,28 @@ docker_frontend:
   before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8} # Short SHA
+    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8}
     - docker build -t rida999/mock-frontend:latest -t rida999/mock-frontend:$COMMIT_SHA ./frontend
     - docker push rida999/mock-frontend:latest
     - docker push rida999/mock-frontend:$COMMIT_SHA
+    - docker run --rm aquasec/trivy image rida999/mock-frontend:$COMMIT_SHA
   dependencies:
     - frontend_build
   only:
     - main
   after_script:
     - docker system prune -f
+
+# --------------------------------
+# Optional Deployment Stage
+# --------------------------------
+deploy_staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - echo "Deploying to staging server..."
+  script:
+    - ssh user@staging-server "docker pull rida999/mock-backend:$COMMIT_SHA && docker pull rida999/mock-frontend:$COMMIT_SHA && docker-compose up -d"
+  only:
+    - main
+  when: manual # Manual trigger for safety
