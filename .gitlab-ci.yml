@@ -1,6 +1,28 @@
 stages:
+  - test
   - build
   - docker
+
+# Backend Test Job
+backend_test:
+  stage: test
+  image: maven:3.9.9-eclipse-temurin-21
+  cache:
+    key: maven-cache
+    paths:
+      - backend/.m2/repository
+    policy: pull-push
+  before_script:
+    - cd backend
+  script:
+    - ./mvnw test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/*.xml
+  only:
+    - main
 
 # Backend Build Job
 backend_build:
@@ -20,6 +42,8 @@ backend_build:
     paths:
       - backend/target/*.jar
     expire_in: 1 hour
+  dependencies:
+    - backend_test
   only:
     - main
 
