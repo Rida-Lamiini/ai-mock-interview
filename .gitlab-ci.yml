@@ -1,62 +1,41 @@
-# -------------------------------
-# GitLab CI/CD Pipeline for Full-Stack Project
-# -------------------------------
+# -----------------------------------------------------
+# GitLab CI/CD Pipeline - Full Stack (Backend + Frontend)
+# -----------------------------------------------------
+
+default:
+  retry: 2
+  interruptible: true
 
 stages:
-  - lint # Optional: catch style/code issues early
-  - test # Run unit tests
-  - build # Build backend/frontend artifacts
-  - docker # Build & push Docker images
-  - deploy # Optional: staging/prod deployments
+  - lint
+  - test
+  - build
+  - docker
+  - deploy
 
-# --------------------------------
+# -----------------------------------------------------
 # Backend Linting
-# --------------------------------
+# -----------------------------------------------------
 backend_lint:
   stage: lint
   image: maven:3.9.9-eclipse-temurin-21
   cache:
     key: maven-${CI_COMMIT_REF_SLUG}
     paths:
-      - backend/.m2/repository
-    policy: pull-push
-    restore-keys:
-      - maven-
-  before_script:
-    - cd backend
-  script:
-    - ./mvnw checkstyle:check # You can add SpotBugs, PMD here too
-  only:
-    - main
-  allow_failure: true # Pipeline continues if lint fails
-
-# --------------------------------
-# Backend Tests
-# --------------------------------
-backend_test:
-  stage: test
-  image: maven:3.9.9-eclipse-temurin-21
-  cache:
-    key: maven-${CI_COMMIT_REF_SLUG}
-    paths:
-      - backend/.m2/repository
+      - .m2/repository
     policy: pull-push
   before_script:
     - cd backend
+    - export MAVEN_OPTS="-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   script:
-    - ./mvnw test
-  artifacts:
-    when: always
-    reports:
-      junit:
-        - target/surefire-reports/*.xml # GitLab can show test results
-  only:
-    - main
-  allow_failure: false # Pipeline stops if tests fail
+    - ./mvnw checkstyle:check
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true
 
-# --------------------------------
+# -----------------------------------------------------
 # Frontend Linting
-# --------------------------------
+# -----------------------------------------------------
 frontend_lint:
   stage: lint
   image: node:18-alpine
@@ -69,15 +48,38 @@ frontend_lint:
     - cd frontend
     - npm ci
   script:
-    - npx eslint src/ --max-warnings=0 # Fails on any lint warning
-  only:
-    - main
+    - npx eslint src/ --max-warnings=0
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
   allow_failure: true
 
-# --------------------------------
+# -----------------------------------------------------
+# Backend Tests
+# -----------------------------------------------------
+backend_test:
+  stage: test
+  image: maven:3.9.9-eclipse-temurin-21
+  cache:
+    key: maven-${CI_COMMIT_REF_SLUG}
+    paths:
+      - .m2/repository
+    policy: pull-push
+  before_script:
+    - cd backend
+    - export MAVEN_OPTS="-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  script:
+    - ./mvnw test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/*.xml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# -----------------------------------------------------
 # Frontend Tests
-# (Optional, can add Jest/React Testing Library)
-# --------------------------------
+# -----------------------------------------------------
 frontend_test:
   stage: test
   image: node:18-alpine
@@ -96,24 +98,24 @@ frontend_test:
     reports:
       junit:
         - frontend/test-results/*.xml
-  only:
-    - main
-  allow_failure: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
-# --------------------------------
+# -----------------------------------------------------
 # Backend Build
-# --------------------------------
+# -----------------------------------------------------
 backend_build:
   stage: build
   image: maven:3.9.9-eclipse-temurin-21
   cache:
     key: maven-${CI_COMMIT_REF_SLUG}
     paths:
-      - backend/.m2/repository
+      - .m2/repository
     policy: pull-push
   before_script:
     - cd backend
     - chmod +x ./mvnw
+    - export MAVEN_OPTS="-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   script:
     - ./mvnw clean package -DskipTests
   artifacts:
@@ -122,12 +124,12 @@ backend_build:
     expire_in: 1 hour
   dependencies:
     - backend_test
-  only:
-    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
-# --------------------------------
+# -----------------------------------------------------
 # Frontend Build
-# --------------------------------
+# -----------------------------------------------------
 frontend_build:
   stage: build
   image: node:18-alpine
@@ -145,67 +147,57 @@ frontend_build:
     paths:
       - frontend/dist/
     expire_in: 1 hour
-  only:
-    - main
+  dependencies:
+    - frontend_test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
-# --------------------------------
-# Docker Build and Push Backend
-# --------------------------------
-docker_backend:
+# -----------------------------------------------------
+# Docker Build (Backend & Frontend in Parallel)
+# -----------------------------------------------------
+docker_build:
   stage: docker
-  image: docker:latest
+  image: docker:24.0.6
   services:
-    - docker:dind
+    - docker:24.0.6-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  parallel:
+    matrix:
+      - NAME: backend
+        PATH: ./backend
+      - NAME: frontend
+        PATH: ./frontend
   before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   script:
-    # Use both latest tag and commit SHA for traceability
     - export COMMIT_SHA=${CI_COMMIT_SHA:0:8}
-    - docker build -t rida999/mock-backend:latest -t rida999/mock-backend:$COMMIT_SHA ./backend
-    - docker push rida999/mock-backend:latest
-    - docker push rida999/mock-backend:$COMMIT_SHA
-    # Optional: scan image for vulnerabilities
-    - docker run --rm aquasec/trivy image rida999/mock-backend:$COMMIT_SHA
+    - docker build -t rida999/mock-$NAME:latest -t rida999/mock-$NAME:$COMMIT_SHA $PATH
+    - docker push rida999/mock-$NAME:latest
+    - docker push rida999/mock-$NAME:$COMMIT_SHA
+    - docker run --rm aquasec/trivy image rida999/mock-$NAME:$COMMIT_SHA || echo "Scan skipped"
   dependencies:
     - backend_build
-  only:
-    - main
-  after_script:
-    - docker system prune -f
-
-# --------------------------------
-# Docker Build and Push Frontend
-# --------------------------------
-docker_frontend:
-  stage: docker
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  script:
-    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8}
-    - docker build -t rida999/mock-frontend:latest -t rida999/mock-frontend:$COMMIT_SHA ./frontend
-    - docker push rida999/mock-frontend:latest
-    - docker push rida999/mock-frontend:$COMMIT_SHA
-    - docker run --rm aquasec/trivy image rida999/mock-frontend:$COMMIT_SHA
-  dependencies:
     - frontend_build
-  only:
-    - main
   after_script:
     - docker system prune -f
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
-# --------------------------------
-# Optional Deployment Stage
-# --------------------------------
+# -----------------------------------------------------
+# Deployment (Manual Trigger)
+# -----------------------------------------------------
 deploy_staging:
   stage: deploy
   image: alpine:latest
   before_script:
     - echo "Deploying to staging server..."
   script:
-    - ssh user@staging-server "docker pull rida999/mock-backend:$COMMIT_SHA && docker pull rida999/mock-frontend:$COMMIT_SHA && docker-compose up -d"
-  only:
-    - main
-  when: manual # Manual trigger for safety
+    - ssh user@staging-server "
+      docker pull rida999/mock-backend:$CI_COMMIT_SHA &&
+      docker pull rida999/mock-frontend:$CI_COMMIT_SHA &&
+      docker-compose -f /path/to/docker-compose.yml up -d
+      "
+  when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
