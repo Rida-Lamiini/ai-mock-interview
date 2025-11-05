@@ -1,0 +1,69 @@
+stages:
+  - test
+  - build
+
+# Backend Testing Job
+backend_test:
+  stage: test
+  image: maven:3.9.4-openjdk-21
+  services:
+    - postgres:15-alpine
+  variables:
+    POSTGRES_DB: mockerdb_test
+    POSTGRES_USER: mockerdb_owner
+    POSTGRES_PASSWORD: testpassword
+    POSTGRES_HOST_AUTH_METHOD: trust
+  before_script:
+    - apt-get update && apt-get install -y postgresql-client
+    - cd backend
+    - chmod +x ./mvnw
+  script:
+    - ./mvnw clean test
+  only:
+    - merge_requests
+    - main
+
+# Frontend Testing Job
+frontend_test:
+  stage: test
+  image: node:18-alpine
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run test -- --watchAll=false
+  only:
+    - merge_requests
+    - main
+
+# Backend Build Job
+backend_build:
+  stage: build
+  image: maven:3.9.4-openjdk-21
+  before_script:
+    - cd backend
+    - chmod +x ./mvnw
+  script:
+    - ./mvnw clean compile -DskipTests
+  artifacts:
+    paths:
+      - backend/target/
+    expire_in: 1 hour
+  only:
+    - main
+
+# Frontend Build Job
+frontend_build:
+  stage: build
+  image: node:18-alpine
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 hour
+  only:
+    - main
