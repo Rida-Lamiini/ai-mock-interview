@@ -6,7 +6,9 @@ stages:
 backend_build:
   stage: build
   image: maven:3.9.9-eclipse-temurin-21
-
+  cache:
+    paths:
+      - .m2/repository
   before_script:
     - cd backend
     - chmod +x ./mvnw
@@ -23,6 +25,10 @@ backend_build:
 frontend_build:
   stage: build
   image: node:18-alpine
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - frontend/node_modules/
   before_script:
     - cd frontend
     - npm ci
