@@ -77,8 +77,10 @@ docker_backend:
   before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - docker build -t rida999/mock-backend:latest ./backend
+    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8} # Short SHA
+    - docker build -t rida999/mock-backend:latest -t rida999/mock-backend:$COMMIT_SHA ./backend
     - docker push rida999/mock-backend:latest
+    - docker push rida999/mock-backend:$COMMIT_SHA
   dependencies:
     - backend_build
   only:
@@ -95,8 +97,10 @@ docker_frontend:
   before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - docker build -t rida999/mock-frontend:latest ./frontend
+    - export COMMIT_SHA=${CI_COMMIT_SHA:0:8} # Short SHA
+    - docker build -t rida999/mock-frontend:latest -t rida999/mock-frontend:$COMMIT_SHA ./frontend
     - docker push rida999/mock-frontend:latest
+    - docker push rida999/mock-frontend:$COMMIT_SHA
   dependencies:
     - frontend_build
   only:
