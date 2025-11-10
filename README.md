@@ -2,16 +2,13 @@
 
 Welcome to the AI Mock Interview project! This application helps users prepare for interviews by simulating an interview environment powered by AI.
 
-## Table of Contents
+## Repository Structure
 
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Database Schema](#database-schema)
-- [Contributing](#contributing)
-- [License](#license)
+This project has been split into multiple repositories for better separation of concerns and independent CI/CD pipelines:
+
+- **[ai-mock-interview-backend](https://gitlab.com/rida999/ai-mock-interview-backend)**: Spring Boot backend service
+- **[ai-mock-interview-frontend](https://gitlab.com/rida999/ai-mock-interview-frontend)**: React frontend application
+- **[ai-mock-interview-infra](https://gitlab.com/rida999/ai-mock-interview-infra)**: Infrastructure, deployment configs, and shared scripts
 
 ## Features
 
@@ -22,95 +19,59 @@ Welcome to the AI Mock Interview project! This application helps users prepare f
 
 ## Technologies Used
 
-- **Frontend:**
+- **Frontend:** React, Tailwind CSS, Vite
+- **Backend:** Spring Boot, PostgreSQL, JPA/Hibernate
+- **DevOps:** Docker & Docker Compose, Nginx, AWS EC2, GitLab CI/CD
 
-  - React
-  - Tailwind CSS
-  - Vite
-
-- **Backend:**
-
-  - Spring Boot
-  - PostgreSQL
-  - JPA/Hibernate
-
-- **DevOps:**
-  - Docker & Docker Compose
-  - Nginx
-  - AWS EC2
-
-## Installation
-
-Follow these steps to set up the project locally:
+## Quick Start
 
 ### Prerequisites
 
 - Node.js (v18+)
 - Java Development Kit (JDK 21+)
 - Docker & Docker Compose
-- PostgreSQL (for local development)
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/your-username/ai-mock-interview.git
-cd ai-mock-interview
-```
 
 ### Local Development Setup
 
-1. **Start the services:**
+1. **Clone all repositories:**
 
    ```bash
-   docker-compose up -d
+   # Clone infrastructure repo (contains Docker setup)
+   git clone https://gitlab.com/rida999/ai-mock-interview-infra.git infra
+   cd infra
+   # Clone backend
+   git clone https://gitlab.com/rida999/ai-mock-interview-backend.git ../backend
+
+   # Clone frontend
+   git clone https://gitlab.com/rida999/ai-mock-interview-frontend.git ../frontend
    ```
 
-2. **Set up frontend environment:**
+2. **Start services from infra repo:**
 
    ```bash
-   cd frontend
-   cp .env.example .env  # Create from example if available
-   # Edit .env with your API keys
+   cd infra
+   docker-compose -f docker-compose.dev.yml up -d
+   ```
+
+3. **Set up backend:**
+
+   ```bash
+   cd ../backend
+   ./mvnw spring-boot:run
+   ```
+
+4. **Set up frontend:**
+
+   ```bash
+   cd ../frontend
    npm install
    npm run dev
    ```
 
-3. **Set up backend environment:**
-
-   ```bash
-   cd backend
-   # The backend will use the database from docker-compose.yml
-   ./mvnw spring-boot:run
-   ```
-
-4. **Access the application:**
+5. **Access the application:**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080/api
 
 ## Deployment
 
-For production deployment on AWS, follow the comprehensive guide in [DEPLOYMENT.md](./DEPLOYMENT.md).
-
-### Quick Production Setup
-
-1. **On your EC2 instance:**
-
-   ```bash
-   # Update system and install Docker
-   sudo apt update && sudo apt install docker.io docker-compose -y
-
-   # Clone repository
-   git clone https://github.com/your-username/ai-mock-interview.git
-   cd ai-mock-interview
-
-   # Set up environment variables
-   cp .env.prod.example .env.prod
-   nano .env.prod  # Edit with your production values
-
-   # Deploy
-   ./scripts/deploy.sh
-   ```
-
-2. **Access your application:**
-   - Frontend: https://your-domain.com
-   - Backend API: https://your-domain.com/api
+For production deployment on AWS, follow the comprehensive guide in the [infra repository](https://gitlab.com/rida999/ai-mock-interview-infra).

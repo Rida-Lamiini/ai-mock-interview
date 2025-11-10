@@ -1,0 +1,6 @@
+- [x] Update test expectations in logo.test.jsx from "EC2" to "GITLAB"
+- [x] Run tests to verify the fix
+- [ ] Fix backend database authentication issue (DB_PASSWORD not set in GitLab CI)
+- [ ] Update docker-compose.prod.yml to use application-prod.properties instead of environment variables
+- [ ] Ensure CORS configuration allows production domain
+- [ ] Test backend connectivity after fixes
