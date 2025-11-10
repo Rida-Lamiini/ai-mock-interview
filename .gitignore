@@ -13,4 +13,5 @@ target/
 # IDEs
 .vscode/
 .idea/
-docker-compose.yml
+docker-compose.ymlsecrets/
+secrets/
