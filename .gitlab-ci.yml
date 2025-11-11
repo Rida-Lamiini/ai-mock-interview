@@ -1,0 +1,22 @@
+# .gitlab-ci.yml - Parent Pipeline
+
+stages:
+  - trigger
+
+trigger_backend:
+  stage: trigger
+  trigger:
+    include: /ai-mock-interview-backend/.gitlab-ci.yml
+    strategy: depend
+  rules:
+    - changes:
+        - ai-mock-interview-backend/**/*
+
+trigger_frontend:
+  stage: trigger
+  trigger:
+    include: /ai-mock-interview-frontend/.gitlab-ci.yml
+    strategy: depend
+  rules:
+    - changes:
+        - ai-mock-interview-frontend/**/*

@@ -1,0 +1,83 @@
+# docker-compose.yml
+# This file defines the services, networks, and volumes for your application.
+# It's used for both local development and production on the EC2 instance.
+#
+# To run locally: docker-compose up --build
+# To run in production: docker-compose -f docker-compose.yml up -d
+#
+# Environment variables are loaded from a .env file in the same directory.
+
+version: '3.8'
+
+services:
+  # Backend Service (Spring Boot)
+  backend:
+    build:
+      context: ./ai-mock-interview-backend
+      dockerfile: Dockerfile
+    image: ${CI_REGISTRY_IMAGE}/ai-mock-interview-backend:${CI_COMMIT_SHA}
+    container_name: backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      # Exposes port 8080 of the container to port 8080 on the host.
+      # The frontend's Nginx will proxy requests to this port.
+      - "8080:8080"
+    environment:
+      # Database connection settings. These are read from the .env file.
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    networks:
+      - app-network
+
+  # Frontend Service (React served by Nginx)
+  frontend:
+    build:
+      context: ./ai-mock-interview-frontend
+      dockerfile: Dockerfile
+    image: ${CI_REGISTRY_IMAGE}/ai-mock-interview-frontend:${CI_COMMIT_SHA}
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      # Exposes port 80 of the container to port 80 on the host (for HTTP).
+      - "80:80"
+      # You would uncomment this line if you were setting up HTTPS with SSL certificates.
+      # - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:14-alpine
+    container_name: db
+    restart: unless-stopped
+    environment:
+      # These variables are used by the PostgreSQL image to initialize the database.
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      # This creates a persistent volume for the database data.
+      # The data will be stored in a Docker-managed volume named 'postgres_data' on the host machine.
+      # This ensures that your data is not lost when the container is stopped or removed.
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    # The port 5432 is NOT exposed to the host machine.
+    # It is only accessible to other containers on the 'app-network'.
+    # This is a security best practice.
+
+# Networks definition
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes definition
+volumes:
+  postgres_data:
+    driver: local
